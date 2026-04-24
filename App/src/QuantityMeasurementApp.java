@@ -7,7 +7,9 @@ public class QuantityMeasurementApp {
 
         public enum LengthUnit {
             FEET(12.0),
-            INCHES(1.0);
+            INCHES(1.0),
+            YARDS(36.0),
+            CENTIMETERS(0.393701);
 
             private final double conversionFactor;
 
@@ -43,8 +45,8 @@ public class QuantityMeasurementApp {
     }
 
     public static void main(String[] args) {
-        Length l1 = new Length(1.0, Length.LengthUnit.FEET);
-        Length l2 = new Length(12.0, Length.LengthUnit.INCHES);
+        Length l1 = new Length(1.0, Length.LengthUnit.YARDS);
+        Length l2 = new Length(3.0, Length.LengthUnit.FEET);
         System.out.println(demonstrateLengthEquality(l1, l2));
     }
 }
