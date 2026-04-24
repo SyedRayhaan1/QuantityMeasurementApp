@@ -11,32 +11,40 @@ public class QuantityMeasurementApp {
             YARDS(36.0),
             CENTIMETERS(0.393701);
 
-            private final double conversionFactor;
+            private final double factor;
 
-            LengthUnit(double conversionFactor) {
-                this.conversionFactor = conversionFactor;
+            LengthUnit(double factor) {
+                this.factor = factor;
             }
 
-            public double getConversionFactor() {
-                return conversionFactor;
+            public double getFactor() {
+                return factor;
             }
         }
 
         public Length(double value, LengthUnit unit) {
+            if (!Double.isFinite(value) || unit == null) throw new IllegalArgumentException();
             this.value = value;
             this.unit = unit;
         }
 
         private double toInches() {
-            return value * unit.getConversionFactor();
+            return value * unit.getFactor();
+        }
+
+        public Length convertTo(LengthUnit targetUnit) {
+            if (targetUnit == null) throw new IllegalArgumentException();
+            double inches = toInches();
+            double converted = inches / targetUnit.getFactor();
+            return new Length(Math.round(converted * 100.0) / 100.0, targetUnit);
         }
 
         @Override
         public boolean equals(Object obj) {
             if (this == obj) return true;
             if (obj == null || getClass() != obj.getClass()) return false;
-            Length length = (Length) obj;
-            return Double.compare(this.toInches(), length.toInches()) == 0;
+            Length other = (Length) obj;
+            return Double.compare(this.toInches(), other.toInches()) == 0;
         }
     }
 
@@ -44,9 +52,16 @@ public class QuantityMeasurementApp {
         return l1.equals(l2);
     }
 
+    public static Length demonstrateLengthConversion(double value, Length.LengthUnit from, Length.LengthUnit to) {
+        return new Length(value, from).convertTo(to);
+    }
+
+    public static Length demonstrateLengthConversion(Length length, Length.LengthUnit to) {
+        return length.convertTo(to);
+    }
+
     public static void main(String[] args) {
-        Length l1 = new Length(1.0, Length.LengthUnit.YARDS);
-        Length l2 = new Length(3.0, Length.LengthUnit.FEET);
-        System.out.println(demonstrateLengthEquality(l1, l2));
+        Length result = demonstrateLengthConversion(3.0, Length.LengthUnit.FEET, Length.LengthUnit.INCHES);
+        System.out.println(result.equals(new Length(36.0, Length.LengthUnit.INCHES)));
     }
 }
